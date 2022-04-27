@@ -1,0 +1,285 @@
+\documentclass[unicode]{beamer}
+\usepackage{cmap}
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage[russian]{babel}
+\usepackage{amsthm, amsmath, amssymb}
+\usetheme{Madrid} % theme in latex
+\usepackage{hyperref}
+\definecolor{linkcolor}{HTML}{799B03} % цвет ссылок
+\definecolor{urlcolor}{HTML}{799B03} % цвет гиперссылок
+
+\hypersetup{pdfstartview=FitH,  linkcolor=linkcolor,urlcolor=urlcolor, colorlinks=false}
+%\usepackage{amsmath}
+
+\title[Анализ спроса]{Анализ спроса на рынке соков в Перми}
+%\subtitle[]
+\author{Димитров В.К}
+\institute[НГУ]{Новосибирский Государственный университет}
+\logo{\includegraphics[width=1cm]{Картинки/znak_2.pdf}}
+\begin{document}
+	
+\begin{frame}{Название слайда}
+	\titlepage
+
+
+\end{frame}
+
+	\begin{frame}
+	\frametitle{Содержание}
+	
+	\tableofcontents [pausesections]
+	
+	
+\end{frame}
+
+
+\section{Постановка задачи}
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	\begin{enumerate}
+		\item 
+		Задача: предсказание спроса на рынке соков в Перми.
+		\item 
+		Количество признаков 25  (после обработки 40).
+		\item
+		Целевая переменная - количество продаж.
+		
+		\item 
+		Методы: 
+		\begin{enumerate}
+			\item Эконометричкский подход
+			
+			\item Инженерный подход
+			
+			\item Смешенный подход
+		\end{enumerate}
+	\end{enumerate}
+\end{frame}
+\section{Эконометрический подход}
+\subtitle{Пуассоновская регрессия}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	\framesubtitle{\insertsubtitle}
+	
+	\begin{block}{Распределение Пуассона}
+		
+		$\xi$ - это случайная величина, которая имеет распределение Пуассона. Тогда		
+		
+		
+		\[P\{\xi = k\} = \dfrac{\exp(-\lambda)\times \lambda^k}{k!}, k = \{0, 1, \ldots \}\]
+		
+	\end{block}	
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsubtitle}
+	\begin{block}{Эконометрическая спецификация}
+		Эконометрическая специфкаиция предложениия , заключается в :
+		
+		\[
+		\lambda = \exp(x'\beta)
+		\]
+
+	\end{block}\pause
+
+
+	\begin{block}{Модель для $y_i$ покупки}
+		Пусть $y_i = k$, тогда наша модель перепишется в виде:
+		
+	\[
+	P(\xi = y_i) = \dfrac{\exp(\exp(x' * \beta)) \times \exp(x'\beta)^{y_{i}}}{y_i!}
+	\]
+		
+		
+	\end{block}
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsubtitle}
+	\begin{block}{Максимум правдоподобия}
+		
+		Для оценки используется оценка максимального правдоподобия. Тогда задача переписывается в виде:
+
+		$$\max\limits_{{\beta}}\dfrac{1}{N}\sum_{i = 1}^{N}\{-\exp(x_{i}'\beta) + y_{i}x_{i}'\beta - \ln(y_i)!\}$$
+
+	\end{block}
+
+	\begin{block}{Но...}
+		
+		 Задача не имеет явного решения
+		
+		
+	\end{block}
+\end{frame}
+\begin{frame}
+	\frametitle{Итеративные методы}
+	\begin{enumerate}
+		\item Поиск по сетке (Grid search)
+		
+		\item Градиентный спуск (Gradient method)
+		
+		\item Метод Ньютона-Рафсона (Newton–Raphson Method)
+		
+	\end{enumerate}
+\end{frame}
+\begin{frame}{GD}
+		\begin{block}{Градиентый метод}
+			\textbf{Градиентные методы (Gradient Method)}. Новые значения признаков пересчитываются по формуле:
+			$$\hat{\beta}_{i+1} = \hat{\beta}_{i} + A_{i}g_{i} $$ 
+		\end{block}
+
+\end{frame}
+\begin{frame}
+	\frametitle{Численные методы (Пример)}
+	
+	\centering
+		\includegraphics[scale=1]{Картинки/picture_2.png}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Метод НР}
+	\begin{block}{Описание метода}
+		Так как наша функция глобально вогнутая, тогда метод НР работает достаточно хорошо. Градиентный спуск модифицируется:
+		
+		
+		$$\hat{\beta_{i+1}} = \hat{\beta_{i}} - H^{-1}_{i} g_{i} $$ \pause
+		
+		
+		
+		$H_i =  \dfrac{\partial^2 Q_N(\beta)}{\partial \beta \partial \beta'}\bigg|_{\hat{\beta}_i}$ - гессиан функции $Q(\beta)$ в точке $\hat{\beta}$.
+		
+	\end{block}
+	
+\end{frame}
+\begin{frame}{Метод НР}
+\begin{alertblock}{Проблемы}		
+	\begin{enumerate}
+		\item Как оптимизировать Гессиан? \pause
+		
+		\item Как выбирать подвыборку? \pause
+		
+		\item Сколько итераций и иниицализация? \pause
+		
+		\item Learning rate \pause
+		
+		\item Написать программу 
+	\end{enumerate}
+\end{alertblock}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Дополнение}
+	\begin{exampleblock}{Расширение спецификации}
+		\large
+		\begin{itemize}
+			
+			\item Пуассон с раздутым нулем (zero inflated poisson)
+			
+			\item Мультиномиальная логистическая модель
+			
+			\item Специфифация для параметра $\lambda$
+		\end{itemize}
+	\end{exampleblock}
+	
+\end{frame}
+\section{Машинное обучение}
+\begin{frame}{Машинное обученение}
+	\begin{itemize}
+		\Large
+		\item  Логистическая регрессия
+		
+		\item  Random Forest
+		
+		\item GradientBoostingClassifier
+	\end{itemize}
+	
+\end{frame}
+\begin{frame}{Точность}
+	\centering
+	\Large
+	\begin{tabular}{ | l | l | l | }
+		\hline
+		Модель & Параметры & Точность(до, после) \\ \hline
+		Логистическая  & lr, alpha & 0.74, 0.76 \\
+		Random Forest &  Много & 0.72, 0.77\\
+		GBR &  Много & 0.84 \\
+		\hline
+	\end{tabular}
+
+
+	
+\end{frame}
+
+\begin{frame}{Ссылка на ноутбук}
+	
+	\href{https://github.com/Harrix/Math-Harrix-Library}{Мой notebook}
+	
+\end{frame}
+\section{Смешанная модель}
+
+\begin{frame}
+	\frametitle{\insertsection}
+		\begin{itemize}
+			\item Можно взять предсказание эконометрической модели и подать на вход любой модели ML (stacking).
+			
+			\item Можно использовать методы кластеризации, для выявление новых признаков для эконометричских моделей.
+		\end{itemize}
+\end{frame}	
+	
+\begin{frame}
+	\frametitle{Пример кластеризации}
+	\centering
+	\includegraphics{Картинки/picture_3.png}
+	
+	
+\end{frame}
+	
+
+
+\section{Вопросы}
+\begin{frame}
+	\frametitle{Вопросы}
+	\begin{block}{Научный блок}
+		\begin{itemize}
+			\item Эластичность
+			
+			\item Интепретация коэффициентов
+			
+			\item Индексы
+			
+			\item Получение состоятельных оценок
+		\end{itemize}
+
+		
+	\end{block} \pause
+
+	\begin{exampleblock}{Бизнес блок}
+		\begin{itemize}
+			\item Как перевести метрику качества в метрику бизнеса ?
+			
+			\item Что может быть интересно бизнесу?
+		\end{itemize}
+	\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Вопросы}
+	\centering
+	\huge
+	Готов ответить на ваши вопросы.
+\end{frame}
+%Заключительный слайд
+\begin{frame}{Благодарность}
+	\centering
+	\huge
+	Спасибо за внимание!
+	
+\end{frame}
+
+
+
+\end{document}
